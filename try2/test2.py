@@ -43,7 +43,12 @@ from langchain.chains import RetrievalQA
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
+
+
 from langchain_pinecone import PineconeVectorStore
+
+# from langchain_text_splitters import CharacterTextSplitter
+
 
 
 # Retrieve Pinecone API key from environment variable
@@ -52,14 +57,14 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 
 # Load PDF document
-loader = PyPDFLoader("try2\KakushIN_problem_statement.pdf")
+loader = PyPDFLoader("try2\Modi-Ki-Guarantee-Sankalp-Patra-English_2.pdf")
 data = loader.load()
-print(data)
+# print(data)
 
 # Split document into chunks
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=20)
 text_chunks = text_splitter.split_documents(data)
-len(text_chunks)
+# len(text_chunks)
 
 # Initialize Pincone embeddings
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -72,10 +77,10 @@ embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-
 index_name = "myindex"
 
 # Initialize Pinecone vector store
-vector_store = PineconeVectorStore(index_name=index_name, embedding=embeddings)
+vector_store = PineconeVectorStore.from_documents(text_chunks, index_name=index_name, embedding=embeddings)
 
 # Add documents to Pinecone index
-vector_store.add_documents(text_chunks)
+# vector_store.add_documents(text_chunks)
 
 #  not in use so far
 # ---------------------------------------------------------------
@@ -94,9 +99,17 @@ prompt = ChatPromptTemplate.from_messages(
 
 # ----------------------------------------------------------------
 
-query = "what is the man to women ratio?"
+query = "How has the Indian government empowered farmers through various initiatives, including MSP hikes, procurement, and income support programs?"
 
-qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=vector_store.as_retriever(search_kwargs={"k": 2}))
+# result_similar = vector_store.similarity_search(query)
+# print('SEARCH KA RESULTTTTTTTTTTTTTTT')
+# print(result_similar)
+
+
+
+# qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff",retriever=vector_store.as_retriever(search_kwargs={"k": 2}))
+
+qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff",retriever=vector_store.as_retriever()  )
 result = qa.invoke(query)
 print(result)
 
