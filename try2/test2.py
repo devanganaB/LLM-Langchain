@@ -44,27 +44,19 @@ from langchain.chains import RetrievalQA
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-import pinecone
 
 
-# Initialize Pinecone with your API key
-pinecone.init(api_key="YOUR_PINECONE_API_KEY")
-
-# Define the Pinecone index name
-index_name = "my_index"
-
-# Create a Pinecone index
-pinecone.create_index(index_name)
-
-
+# Load PDF document
 loader = PyPDFLoader("try2\KakushIN_problem_statement.pdf")
 data = loader.load()
 print(data)
 
+# Split document into chunks
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=20)
 text_chunks = text_splitter.split_documents(data)
 len(text_chunks)
 
+# Initialize embeddings
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 vector_store = FAISS.from_documents(text_chunks, embedding=embeddings)
 
