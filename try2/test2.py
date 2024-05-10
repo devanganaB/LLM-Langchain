@@ -25,11 +25,6 @@ from langchain_core.prompts import PromptTemplate
 
 
 
-repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
-
-llm = HuggingFaceEndpoint(
-    repo_id=repo_id, max_length=500, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
-)
 # llm_chain = LLMChain(prompt=prompt, llm=llm)
 # print(llm_chain.run(question))
 
@@ -47,40 +42,48 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 
 from langchain_pinecone import PineconeVectorStore
 
-# from langchain_text_splitters import CharacterTextSplitter
-
-
 
 # Retrieve Pinecone API key from environment variable
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
-
-
-# Load PDF document
-loader = PyPDFLoader("try2\Modi-Ki-Guarantee-Sankalp-Patra-English_2.pdf")
-data = loader.load()
-# print(data)
-
-# Split document into chunks
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=20)
-text_chunks = text_splitter.split_documents(data)
-# len(text_chunks)
-
 # Initialize Pincone embeddings
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# Define Pinecone index name
+index_name = "index"
+
+vector_store = PineconeVectorStore(index_name=index_name, embedding=embeddings)
+
+
+
+
+path = "try2\Modi-Ki-Guarantee-Sankalp-Patra-English_2.pdf"
+
+def data_stuff(path):
+
+    # Load PDF document
+    loader = PyPDFLoader(path)
+    data = loader.load()
+    # print(data)
+
+    # Split document into chunks
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    text_chunks = text_splitter.split_documents(data)
+    # len(text_chunks)
+
+    # Initialize Pinecone vector store
+    vector_store_from_docs = PineconeVectorStore.from_documents(text_chunks, index_name=index_name, embedding=embeddings)
+
+
+
+
+# Add documents to Pinecone index
+# vector_store.add_documents(text_chunks)
 
 # since pinecone is being used for vector store
 # vector_store = FAISS.from_documents(text_chunks, embedding=embeddings)
 
 
-# Define Pinecone index name
-index_name = "myindex"
-
-# Initialize Pinecone vector store
-vector_store = PineconeVectorStore.from_documents(text_chunks, index_name=index_name, embedding=embeddings)
-
-# Add documents to Pinecone index
-# vector_store.add_documents(text_chunks)
 
 #  not in use so far
 # ---------------------------------------------------------------
@@ -105,11 +108,19 @@ query = "How has the Indian government empowered farmers through various initiat
 # print('SEARCH KA RESULTTTTTTTTTTTTTTT')
 # print(result_similar)
 
-
-
 # qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff",retriever=vector_store.as_retriever(search_kwargs={"k": 2}))
 
-qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff",retriever=vector_store.as_retriever()  )
-result = qa.invoke(query)
-print(result)
+def ask_query(query):
+
+    repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
+
+    llm = HuggingFaceEndpoint(
+        repo_id=repo_id, max_length=500, temperature=0.5, token=HUGGINGFACEHUB_API_TOKEN
+    )
+    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff",retriever=vector_store.as_retriever())
+    result = qa.invoke(query)
+    print(result)
+
+
+ask_query(query)
 
