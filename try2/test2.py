@@ -9,7 +9,6 @@ import os
 
 load_dotenv()
 
-# os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
 
 HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
@@ -44,6 +43,12 @@ from langchain.chains import RetrievalQA
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_pinecone import PineconeVectorStore
+
+
+# Retrieve Pinecone API key from environment variable
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+
 
 
 # Load PDF document
@@ -56,10 +61,24 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=2
 text_chunks = text_splitter.split_documents(data)
 len(text_chunks)
 
-# Initialize embeddings
+# Initialize Pincone embeddings
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-vector_store = FAISS.from_documents(text_chunks, embedding=embeddings)
 
+# since pinecone is being used for vector store
+# vector_store = FAISS.from_documents(text_chunks, embedding=embeddings)
+
+
+# Define Pinecone index name
+index_name = "myindex"
+
+# Initialize Pinecone vector store
+vector_store = PineconeVectorStore(index_name=index_name, embedding=embeddings)
+
+# Add documents to Pinecone index
+vector_store.add_documents(text_chunks)
+
+#  not in use so far
+# ---------------------------------------------------------------
 system_prompt = (
     "Use the given context to answer the question. "
     "If you don't know the answer, say you don't know. "
@@ -72,6 +91,8 @@ prompt = ChatPromptTemplate.from_messages(
         ("human", "{input}"),
     ]
 )
+
+# ----------------------------------------------------------------
 
 query = "what is the man to women ratio?"
 
