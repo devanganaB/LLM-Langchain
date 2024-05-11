@@ -11,6 +11,31 @@ export default function Home() {
     message: 'Hey, how may I help you?'
   }]);
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null);
+  const [circularload, setCircularLoad] = useState(false);
+
+  const uploadFile = async () => {
+    const formdata = new FormData();
+    formdata.append("file", file);
+
+    setCircularLoad(true);
+
+    const upload_file = await axios.post(`http://127.0.0.1:5000/upload`, formdata, {headers : {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  setCircularLoad(false);
+
+  console.log(upload_file);
+
+  }
+
+  const selectFile = (event) => {
+    setFile(event.target.files[0]);
+  }
+
+  
 
   const handleNewMessage = (event) => {
     setNewMessages(event.target.value);
@@ -64,7 +89,11 @@ export default function Home() {
 
         <div className="flex items-center justify-around fixed bottom-10 w-full">
 
-          <input type="file" className="file-input file-input-bordered file-input-accent mx-5 min-w-80" />
+          <input onChange={selectFile} type="file" className="file-input file-input-bordered file-input-accent mx-5 min-w-80" />
+          
+          <button onClick={uploadFile} className={circularload ? "hidden" : "btn btn-outline btn-accent"}> Upload </button>
+
+          <span className={circularload ? "loading loading-spinner text-accent size-8" : "hidden" }></span>
 
           <input onChange={handleNewMessage} value={newMessages} type="text" placeholder="Type here" className="input input-bordered w-full mx-5" />
 

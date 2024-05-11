@@ -105,7 +105,8 @@ def upload_document():
 
         file = request.files['file']
         file_name = file.filename
-        filepath = f"backend/try2/uploads/{file_name}"
+        # filepath = f"./uploads/{file_name}"
+        filepath = os.path.join("uploads", file_name)
         file.save(filepath)
         try:
             data_stuff(filepath)
