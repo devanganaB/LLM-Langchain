@@ -68,9 +68,10 @@ export default function Home() {
 
 
   return (
-    <main className="flex justify-center min-h-screen p-25">
+    <main className="flex justify-center min-h-screen">
       <div className="w-full font-mono text-sm lg:flex flex-col space-y-8 ">
         
+        {/* div 1 */}
         <div className="flex flex-col space-y-4 mx-10 my-10">
           {
             messages.map((m, index) => (
@@ -82,24 +83,31 @@ export default function Home() {
 
           <span className={loading? "loading loading-bars loading-md" : "hidden"}></span>
 
-    
         </div>
 
+        <div className="h-24"></div>
 
 
-        <div className="flex items-center justify-around fixed bottom-10 w-full">
+        {/* div 2 */}
 
-          <input onChange={selectFile} type="file" className="file-input file-input-bordered file-input-accent mx-5 min-w-80" />
-          
-          <button onClick={uploadFile} className={circularload ? "hidden" : "btn btn-outline btn-accent"}> Upload </button>
+        <div className="bg-slate-900 fixed bottom-0 h-32 w-full">
 
-          <span className={circularload ? "loading loading-spinner text-accent size-8" : "hidden" }></span>
+          <div className="flex items-center justify-around fixed bottom-10 w-full">
 
-          <input onChange={handleNewMessage} value={newMessages} type="text" placeholder="Type here" className="input input-bordered w-full mx-5" />
+            <input onChange={selectFile} type="file" className="file-input file-input-bordered file-input-accent mx-5 min-w-80" />
+            
+            <button onClick={uploadFile} className={circularload ? "hidden" : "btn btn-outline btn-accent"}> Upload </button>
 
-          <button onClick={handleMessage} className="btn btn-outline btn-accent mx-5 px-8"> ASK </button>
+            <span className={circularload ? "loading loading-spinner text-accent size-8" : "hidden" }></span>
+
+            <input onChange={handleNewMessage} value={newMessages} type="text" placeholder="Type here" className="input input-bordered w-full mx-5" />
+
+            <button onClick={handleMessage} className="btn btn-outline btn-accent mx-5 px-8"> ASK </button>
+
+          </div>
 
         </div>
+      
 
       </div>
     </main>
