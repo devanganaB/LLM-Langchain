@@ -41,6 +41,8 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_pinecone import PineconeVectorStore
 
 
+import streamlit as st
+
 # Retrieve Pinecone API key from environment variable
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
@@ -55,7 +57,7 @@ vector_store = PineconeVectorStore(index_name=index_name, embedding=embeddings)
 
 path = "try2\Modi-Ki-Guarantee-Sankalp-Patra-English_2.pdf"
 
-def data_stuff(path):
+def load_document(path):
 
     # Load PDF document
     loader = PyPDFLoader(path)
@@ -96,7 +98,7 @@ def data_stuff(path):
 
 # ----------------------------------------------------------------
 
-query = "How has the Indian government empowered farmers through various initiatives, including MSP hikes, procurement, and income support programs?"
+# query = "How has the Indian government empowered farmers through various initiatives, including MSP hikes, procurement, and income support programs?"
 
 # result_similar = vector_store.similarity_search(query)
 # print('SEARCH KA RESULTTTTTTTTTTTTTTT')
@@ -114,7 +116,46 @@ def ask_query(query):
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff",retriever=vector_store.as_retriever())
     result = qa.invoke(query)
     print(result)
+    
+    # Access and display the value of the 'result' key
+    st.write(result['result'])
 
 
-ask_query(query)
+# ask_query(query)
+
+
+# Create the "uploads" directory if it doesn't exist
+uploads_dir = "uploads"
+if not os.path.exists(uploads_dir):
+    os.makedirs(uploads_dir)
+
+
+
+st.title("Document Retrieval and Question Answering")
+
+uploaded_file = st.file_uploader("Upload a PDF document", type="pdf")
+
+if uploaded_file is not None:
+    # Generate a unique filename (optional)
+    filename = f"{os.path.splitext(uploaded_file.name)[0]}.pdf"  # Remove extension and add .pdf
+    unique_filename = filename
+    counter = 1
+    while os.path.exists(os.path.join(uploads_dir, unique_filename)):
+        unique_filename = f"{filename[:-4]}_{counter}.pdf"  # Add counter before extension
+        counter += 1
+
+    # Save the uploaded file in the "uploads" directory
+    with open(os.path.join(uploads_dir, unique_filename), "wb") as f:
+        f.write(uploaded_file.read())
+    path = os.path.join(uploads_dir, unique_filename)  # Update path with full directory
+    load_document(path)
+    st.success(f"Document uploaded and processed! (Saved as: {unique_filename})")
+
+
+user_query = st.text_input("Enter your question:")
+
+if st.button("Ask") and user_query and uploaded_file:
+    # response = 
+    ask_query(user_query)
+    # st.write(response)
 
