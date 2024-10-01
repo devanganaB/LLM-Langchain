@@ -2,18 +2,18 @@
 This project is a document retrieval and question-answering system built using Langchain, HuggingFace, Pinecone, and Streamlit. The application allows users to upload PDF documents, processes them to create embeddings, and then retrieves relevant information from the documents based on user queries. The document's content is indexed in Pinecone, and HuggingFace's language models are used to answer questions by retrieving the most relevant text chunks.
 
 ## Features
-### PDF Upload: Upload a PDF document that is processed and indexed for retrieval.
-### Document Chunking: The document is split into smaller chunks using recursive text splitting for efficient retrieval.
-### Embedding and Vector Store: HuggingFace embeddings are used to create vectors for the document's text, stored in a Pinecone index.
-### Question Answering: A question is answered by retrieving relevant document sections from the Pinecone vector store.
-### Streamlit Interface: The application provides a user-friendly interface built with Streamlit.
+* PDF Upload: Upload a PDF document that is processed and indexed for retrieval.
+* Document Chunking: The document is split into smaller chunks using recursive text splitting for efficient retrieval.
+* Embedding and Vector Store: HuggingFace embeddings are used to create vectors for the document's text, stored in a Pinecone index.
+* Question Answering: A question is answered by retrieving relevant document sections from the Pinecone vector store.
+* Streamlit Interface: The application provides a user-friendly interface built with Streamlit.
 
 ## Project Structure
-### HuggingFaceEmbeddings: Used to create embeddings from text chunks for storing in Pinecone.
-### PyPDFLoader: Loads and processes PDF documents.
-### PineconeVectorStore: Handles the vector store functionality using Pinecone.
-### Streamlit: Provides the interface for file uploading and question answering.
-### RetrievalQA: Performs the retrieval and question-answering process using HuggingFace's language model.
+* HuggingFaceEmbeddings: Used to create embeddings from text chunks for storing in Pinecone.
+* PyPDFLoader: Loads and processes PDF documents.
+* PineconeVectorStore: Handles the vector store functionality using Pinecone.
+* Streamlit: Provides the interface for file uploading and question answering.
+* RetrievalQA: Performs the retrieval and question-answering process using HuggingFace's language model.
 
 ## Setup Instructions
 ### Prerequisites
