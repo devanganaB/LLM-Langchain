@@ -1,4 +1,9 @@
 secret.py
 .env
 myenv
-backend\try2\myenv
+backend/try2/venv
+backend\try2\venv
+backend/__pycache__
+backend/.ipynb_checkpoints
+backend/try2/.env
+backend\try2\.env

@@ -55,7 +55,7 @@ index_name = "index"
 vector_store = PineconeVectorStore(index_name=index_name, embedding=embeddings)
 
 
-path = "try2\Modi-Ki-Guarantee-Sankalp-Patra-English_2.pdf"
+# path = "try2\Modi-Ki-Guarantee-Sankalp-Patra-English_2.pdf"
 
 def load_document(path):
 
